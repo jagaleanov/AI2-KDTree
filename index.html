@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Árbol KD</title>
+
+    <!--CSS-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!--JS-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+
+<body>
+    <!-- <form class="form-inline">
+
+        <div class="form-group">
+            <label for="files">Upload a CSV formatted file:</label>
+            <input type="file" id="files" class="form-control" accept=".csv" required />
+        </div>
+
+        <div class="form-group">
+            <button type="button" id="submit-file" class="btn btn-primary">Upload File</button>
+        </div>
+
+    </form> -->
+    <table id="parsed_csv_list"></table>
+
+    <div class="fluid-container">
+        <nav class="avbar navbar-dark bg-dark navbar-expand-lg">
+            <h1 class="navbar-brand mx-4">Árbol KD</h1>
+        </nav>
+        <div class="card mx-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-5 col-lg-6 col-xl-6">
+                        <h5 class="card-title">Entrada de datos</h5>
+                        <form class="form-inline">
+                            <div class="row">
+                                <div class="form-group col-12 col-sm-12 col-md-5 col-lg-6 col-xl-6">
+                                    <label for="files">Seleccione un archivo csv con los datos</label>
+                                    <input type="file" id="files" class="form-control" accept=".csv" required />
+                                </div>
+                                <div class="form-group col-12 col-sm-12 col-md-5 col-lg-6 col-xl-6">
+                                    <button type="button" id="submit-file" class="btn btn-primary btn-block">Subir
+                                        archivo</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mx-4 mt-4">
+            <div class="card-body ">
+                <h5 class="card-title">Árbol generado</h5>
+                <div class="tree">
+                    <ul id="ulTree">
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body ">
+                <h5 class="card-title">Reglas</h5>
+                <div id="rules">
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <script src="js/papaparse.min.js"></script>
+    <script src="js/tree.js"></script>
+</body>
+
+</html>
