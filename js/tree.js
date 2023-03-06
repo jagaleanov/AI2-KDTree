@@ -21,6 +21,7 @@ function readFile() {
                 for (i = 0; i < data.length; i++) {
                     let finalRow = [];
                     let row = data[i];
+                    // console.log(row)
                     finalRow = row.join(";").split(";");
                     matrix.push(finalRow)
                 }
@@ -31,7 +32,7 @@ function readFile() {
             // console.log("Parsing file...", file);
         },
         error: function (err, file) {
-            console.log("ERROR:", err, file);
+            // console.log("ERROR:", err, file);
         },
         complete: function () {
             // console.log("Done with all files");
@@ -41,67 +42,85 @@ function readFile() {
 
 function initProcessData(matrix) {
     labels = matrix.shift()
+    // console.log(matrix)
     processDataRecursive(matrix)
     // console.log(nodeList)
-    console.log(tree.head)
-    // drawTree()
-    tree.toHTML(tree.head)
+    // console.log(tree.head)
     $('#ulTree').html(tree.toHTML(tree.head));//imprimir arbol
     tree.setPathways(tree.head)
     $("#rules").html(tree.getPathways())
     // console.log(tree.getPathways())
+    $("#testRules").html(reviewRules(matrix))
+
+
 }
 
 function processDataRecursive(matrix, colToWork = 0, parent = '', direction = '') {
 
 
     matrix = bubbleSortMatrix(matrix, colToWork)
+    // console.log(matrix)
+    // console.log(colToWork)
 
 
     if (colToWork < matrix[0].length) {
 
+        // buscar fila central
         let maxSize = Math.floor(matrix.length / 2) - 1
         let minSize = Math.floor(matrix.length / 2) - 1
 
         if (matrix.length > 1) {
 
+            // aumentar hasta encontrar un valor de cambio en la columna a trabajar
             while (typeof matrix[maxSize + 1] !== 'undefined' && matrix[maxSize][colToWork] == matrix[maxSize + 1][colToWork]) {
                 maxSize++
             }
+            // console.log('maxSize',maxSize);
 
+            // disminuir hasta encontrar un valor de cambio en la columna a trabajar
             while (typeof matrix[minSize - 1] !== 'undefined' && matrix[minSize][colToWork] == matrix[minSize - 1][colToWork]) {
                 minSize--
             }
 
-            if (maxSize < matrix.length - 1) {
+            // console.log('minSize',minSize);
+            if (maxSize < matrix.length - 1) {//si es mas cercano el cambio en una fila inferior
                 let m1 = matrix.slice(0, maxSize + 1)
                 let m2 = matrix.slice(maxSize + 1)
-                cutValue = ((((matrix[maxSize + 1][colToWork] * 100000) - (matrix[maxSize][colToWork] * 100000)) / 2) + matrix[maxSize][colToWork] * 100000) / 100000
-                // let id = createNode(parent, labels[colToWork] + '\n>' + cutValue, matrix.length, parent == '' ? 'head' : direction)
-                let id = tree.addNode(parent, direction, cutValue, labels[colToWork], matrix.length)
-                colToWork++
+                cutValue = ((((parseFloat(matrix[maxSize + 1][colToWork]) * 10000000) - (parseFloat(matrix[maxSize][colToWork]) * 10000000)) / 2) + parseFloat(matrix[maxSize][colToWork]) * 10000000) / 10000000
+                // console.log('cutValue', cutValue)
+                let id = tree.addNode(parent, direction, cutValue, labels[colToWork], colToWork, matrix.length)
+                // colToWork++
+                if (colToWork == labels.length - 2) {
+                    colToWork = 0
+                } else {
+                    colToWork++
+                }
                 processDataRecursive(m1, colToWork, id, 'left')
                 processDataRecursive(m2, colToWork, id, 'right')
-            } else if (minSize > 0) {
+            } else if (minSize > 0) {//si es mas cercano el cambio en una fila superior
                 let m1 = matrix.slice(0, minSize + 1)
                 let m2 = matrix.slice(minSize + 1)
-                cutValue = ((((matrix[minSize + 1][colToWork] * 100000) - (matrix[minSize][colToWork] * 100000)) / 2) + matrix[minSize][colToWork] * 100000) / 100000
-                // let id = createNode(parent, labels[colToWork] + '\n>' + cutValue, matrix.length, parent == '' ? 'head' : direction)
-                let id = tree.addNode(parent, direction, cutValue, labels[colToWork], matrix.length)
-                colToWork++
+                cutValue = ((((parseFloat(matrix[minSize + 1][colToWork]) * 10000000) - (parseFloat(matrix[minSize][colToWork]) * 10000000)) / 2) + parseFloat(matrix[minSize][colToWork]) * 10000000) / 10000000
+                // console.log('cutValue', cutValue)
+                let id = tree.addNode(parent, direction, cutValue, labels[colToWork], colToWork, matrix.length)
+                // colToWork++
+                if (colToWork == labels.length - 2) {
+                    colToWork = 0
+                } else {
+                    colToWork++
+                }
                 processDataRecursive(m1, colToWork, id, 'left')
                 processDataRecursive(m2, colToWork, id, 'right')
-            } else {
+            } else {//si no hay cambios y todos son iguales
                 colToWork++
                 processDataRecursive(matrix, colToWork, parent, direction)
             }
-        } else {
+        } else {//si solo hay una fila
             colToWork++
             processDataRecursive(matrix, colToWork, parent, direction)
         }
     } else {
-        // let id = createNode(parent, labels[labels.length - 1] + ' ' + matrix[0][matrix[0].length - 1], matrix.length)
-        tree.addNode(parent, direction, null, labels[labels.length - 1] + ' ' + matrix[0][matrix[0].length - 1], matrix.length)
+        tree.addNode(parent, direction, null, labels[labels.length - 1] + ' ' + matrix[0][matrix[0].length - 1],null, matrix.length)
     }
 
 }
@@ -134,54 +153,55 @@ function bubbleSortMatrix(matrix, field) {
     return matrix
 }
 
+function reviewRules(matrix) {
+    // console.log(tree.head)
+    // console.log('MATRIX', matrix)
+    inRule = 0
+    notInRule = 0
+    matrix.forEach(function (item, index) {
+        // console.log('')
+        // console.log('------')
+        // console.log('index',index)
+        // console.log(item)
+
+        head = tree.head
+        if (compareRegisterToRules(head, item)) {
+            inRule++
+        } else {
+            notInRule++
+        }
 
 
-// function createNode(parent, name, value, type) {
-//     let node = {
-//         id: nodeCounter.toString(),
-//         parent: parent.toString(),
-//         name: name.toUpperCase(),
-//         value: value,
-//         type: type
-//     }
-//     nodeList.push(node)
+    })
+    // console.log('')
+    // console.log('****************')
+    // console.log('inRule',inRule)
+    // console.log('notInRule',notInRule)
+    // console.log('total',inRule + notInRule)
+    // console.log('proporción de acierto en reescritura',inRule * 100 / (inRule + notInRule))
 
-//     nodeCounter++
-//     return nodeCounter - 1
-// }
+    return (inRule + notInRule) + ' registros comprobados: ' + inRule + ' acertados, ' + notInRule + ' no acertados. <br>La proporción de acierto en reescritura es de ' + (Math.round(inRule * 100 / (inRule + notInRule) * 100) / 100) + '%'
+}
 
+function compareRegisterToRules(head, list) {
+    if (head.cutValue == null) {//el nodo es hoja
 
-// function drawTree() {
-//     let chartData = nodeList;
+        // console.log('head.label',head.label)
+        // console.log('q',labels[labels.length - 1] + ' ' + list[list.length - 1])
+        if (labels[labels.length - 1] + ' ' + list[list.length - 1]) {
+            return true
+        } else {
+            return false
+        }
+    } else {//el nodo es padre
 
-//     let chartConfig = {
-//         type: 'tree',
-//         options: {
-//             link: {
-//                 aspect: 'arc'
-//             },
-//             maxSize: 15,
-//             minSize: 5,
-//             node: {
-//                 type: 'circle',
-//                 tooltip: {
-//                     padding: '8px 10px',
-//                     borderRadius: '3px',
-//                 }
-//             }
-//         },
-//         series: chartData
-//     };
-
-//     zingchart.render({
-//         id: 'tree',
-//         data: chartConfig,
-//         height: '400%',
-//         width: '100%',
-//         output: 'canvas'
-//     });
-
-// }
+        if (list[head.col] > head.cutValue) {
+            return compareRegisterToRules(head.right, list)
+        } else {
+            return compareRegisterToRules(head.left, list)
+        }
+    }
+}
 
 
 
@@ -196,12 +216,14 @@ class Node {
     left;
     right;
     parent;
+    col;
 
-    constructor(id, cutValue, label, value) {
+    constructor(id, cutValue, label, col, value) {
         this.id = id;
-        this.label = label;
-        this.value = value;
         this.cutValue = cutValue;
+        this.label = label;
+        this.col = col;
+        this.value = value;
         this.left = null;
         this.right = null;
         this.parent = null;
@@ -238,26 +260,26 @@ class Tree {
         }
     }
 
-    addNode(parentId, direction, cutValue, label, value) {
-        console.log('')
-        console.log('---------')
-        console.log('parentId', parentId)
-        console.log('direction', direction)
-        console.log('cutValue', cutValue)
-        console.log('label', label)
-        console.log('value', value)
-        console.log('Tree', this.head)
+    addNode(parentId, direction, cutValue, label, col, value) {
+        // console.log('')
+        // console.log('---------')
+        // console.log('parentId', parentId)
+        // console.log('direction', direction)
+        // console.log('cutValue', cutValue)
+        // console.log('label', label)
+        // console.log('value', value)
+        // console.log('Tree', this.head)
 
         if (parentId === '') {
-            console.log('Parent empty')
+            // console.log('Parent empty')
             if (this.head == null) {
-                console.log('nodo raiz libre')
+                // console.log('nodo raiz libre')
                 this.nodeCounter++;
-                var newNode = new Node(this.nodeCounter, cutValue, label, value);
+                var newNode = new Node(this.nodeCounter, cutValue, label, col, value);
                 this.head = newNode;
                 return this.nodeCounter;
             } else {
-                console.log('nodo raiz ocupado')
+                // console.log('nodo raiz ocupado')
                 return false;
             }
 
@@ -269,28 +291,28 @@ class Tree {
             if (direction === "left") {
                 if (parentNode.left === null) {
                     this.nodeCounter++;
-                    var newNode = new Node(this.nodeCounter, cutValue, label, value);
+                    var newNode = new Node(this.nodeCounter, cutValue, label, col, value);
                     newNode.parent = parentNode;
                     parentNode.left = newNode;
                     return this.nodeCounter;
                 } else {
-                    console.log("El nodo ya esta ocupado,");
+                    // console.log("El nodo ya esta ocupado,");
                     return false;
                 }
 
             } else if (direction === "right") {
                 if (parentNode.right === null) {
                     this.nodeCounter++;
-                    var newNode = new Node(this.nodeCounter, cutValue, label, value);
+                    var newNode = new Node(this.nodeCounter, cutValue, label, col, value);
                     newNode.parent = parentNode;
                     parentNode.right = newNode;
                     return this.nodeCounter;
                 } else {
-                    console.log("El nodo ya esta ocupado.");
+                    // console.log("El nodo ya esta ocupado.");
                     return false;
                 }
             } else {
-                console.log('Direction ' + direction + ' no encontrada');
+                // console.log('Direction ' + direction + ' no encontrada');
                 return false;
             }
         }
@@ -335,7 +357,9 @@ class Tree {
     }
 
     getPathways() {
-        let html = '<table class="table table-sm table-bordered">';
+        console.log(this.paths)
+        let html = this.paths.length + ' reglas generadas';
+        html += '<table class="table table-sm table-bordered">';
         for (let i = 0; i < this.paths.length; i++) {
             html += '<tr>'
             for (let j = 0; j < this.paths[i].length; j++) {
@@ -350,7 +374,7 @@ class Tree {
 
     toHTML(head, treeId) {
         var html = "";
-        console.log('head',head)
+        // console.log('head',head)
 
         if (head === null) {
             return '<li><span class="px-2 py-1">*</span></li>';
@@ -362,7 +386,7 @@ class Tree {
                 '<div class="rounded-pill px-2 py-1" title="' +
                 head.value + '">' +
                 head.label.toUpperCase() +
-                (head.cutValue != null ? ' > '+head.cutValue : '') +
+                (head.cutValue != null ? ' > ' + head.cutValue : '') +
                 '</div>';
 
             if (!(head.left === null && head.right === null)) {

@@ -16,7 +16,7 @@ body {
     background: #FFF;
     white-space: nowrap;
     /*font-weight: bold;*/
-    width: 500%;
+    width: 6000%;
     font-size: 0.8em;
     overflow: hidden;
 }
@@ -95,8 +95,7 @@ body {
     border: 1px solid #000;
     transition: all 0.5s;
     cursor: pointer;
-}
-.tree li div{
     background: #007bff;
     color: #fff; 
+    padding: 5px 1px 5px 1px !important;
 }
