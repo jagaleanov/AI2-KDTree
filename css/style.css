@@ -16,8 +16,8 @@ body {
     background: #FFF;
     white-space: nowrap;
     /*font-weight: bold;*/
-    width: 6000%;
-    font-size: 0.8em;
+    width: 7000%;
+    font-size: 0.9em;
     overflow: hidden;
 }
 
@@ -92,10 +92,10 @@ body {
 /*Div del nodo*/
 .tree li div{
     display: inline-block;
-    border: 1px solid #000;
+    /* border: 1px solid #000; */
     transition: all 0.5s;
     cursor: pointer;
-    background: #007bff;
-    color: #fff; 
+    /* background: #007bff; */
+    color: #000; 
     padding: 5px 1px 5px 1px !important;
 }
